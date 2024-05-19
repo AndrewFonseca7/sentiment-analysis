@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return "Hello ReflexAI, nice to meet you!"', () => {
+      expect(appController.getHello()).toBe(
+        'Hello ReflexAI, nice to meet you!',
+      );
     });
   });
 });

@@ -22,11 +22,15 @@
   "dependencies": {
     "@google-cloud/language": "^6.3.0",
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
     "@nestjs/mongoose": "^10.0.6",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
+    "express-rate-limit": "^7.2.0",
     "mongoose": "^8.4.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
@@ -59,6 +63,13 @@
       "js",
       "json",
       "ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/",
+      "main.ts",
+      "module.ts",
+      "dto.ts"
     ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
