@@ -7,12 +7,12 @@ export class AppService {
   constructor(@Inject('Logger') private readonly logger: Logger) {}
 
   getHello(): string {
-    this.logger.info('Hello ReflexAI, nice to meet you!!');
+    this.logger.error('Hello ReflexAI, nice to meet you!!');
     return 'Hello ReflexAI, nice to meet you!!';
   }
 
   async getStatus(): Promise<any> {
-    const client = new Client({ node: 'http://localhost:9200' });
+    const client = new Client({ node: process.env.ELASTICSEARCH_HOST });
     try {
       const health = await client.cluster.health();
       console.log('Elasticsearch cluster health:', health);
@@ -24,7 +24,7 @@ export class AppService {
   }
 
   async sendLog(): Promise<string> {
-    const client = new Client({ node: 'http://localhost:9200' });
+    const client = new Client({ node: process.env.ELASTICSEARCH_HOST });
     try {
       await client.index({
         index: 'sentiment-logs-test',

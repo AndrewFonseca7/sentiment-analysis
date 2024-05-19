@@ -1,22 +1,15 @@
 import * as winston from 'winston';
-import * as Elasticsearch from 'winston-elasticsearch';
-
-const elasticsearchOptions = {
-  level: 'info',
-  clientOpts: {
-    node: process.env.ELASTICSEARCH_HOST || 'http://elasticsearch:9200',
-  },
-  indexPrefix: 'sentiment-logs',
-};
-
-const esTransport = new Elasticsearch.ElasticsearchTransport(
-  elasticsearchOptions,
-);
+import ElasticSearchTransport from './elasticSearchTransport';
 
 const Logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
-  transports: [new winston.transports.Console(), esTransport],
+  transports: [
+    new winston.transports.Console(),
+    new ElasticSearchTransport({
+      elasticsearchHost: process.env.ELASTICSEARCH_HOST,
+    }),
+  ],
 });
 
 Logger.on('error', (err) => {
