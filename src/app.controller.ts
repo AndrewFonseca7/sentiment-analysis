@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('status')
+  async getStatus(): Promise<any> {
+    return await this.appService.getStatus();
+  }
+
+  @Get('send-log')
+  async sendLog(): Promise<string> {
+    return await this.appService.sendLog();
+  }
 }

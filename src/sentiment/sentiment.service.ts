@@ -1,17 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Sentiment } from './schemas/sentiment.schema';
 import { LanguageServiceClient } from '@google-cloud/language';
 import { SentimentResponseDto } from './dto/sentimentResponse.dto';
+import { Logger } from 'winston';
 
 @Injectable()
 export class SentimentService {
-  private readonly logger = new Logger(SentimentService.name);
   private readonly LanguageServiceClient = new LanguageServiceClient();
 
   constructor(
     @InjectModel(Sentiment.name) private sentimentModel: Model<any>,
+    @Inject('Logger') private readonly logger: Logger,
   ) {}
 
   async analyzeText(text: string): Promise<SentimentResponseDto> {
@@ -27,19 +28,23 @@ export class SentimentService {
         score: analysisResult.score,
         magnitude: analysisResult.magnitude,
       });
-      console.log('---------------', newSentiment);
-
       newSentiment.save();
 
-      const response: SentimentResponseDto = {
+      const sentimentResponseDto: SentimentResponseDto = {
         text,
         score: analysisResult.score,
         magnitude: analysisResult.magnitude,
       };
 
-      return response;
+      this.logger.error(
+        `${SentimentService.name} Text analyzed: ${sentimentResponseDto}`,
+      );
+
+      return sentimentResponseDto;
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(
+        `${SentimentService.name} Error analyzing text: ${error}`,
+      );
       throw new Error('Error analyzing text');
     }
   }

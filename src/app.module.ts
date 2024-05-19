@@ -9,6 +9,7 @@ import {
   Sentiment,
 } from './sentiment/schemas/sentiment.schema';
 import { DatabaseModule } from './database/database.module';
+import Logger from './logger/logger';
 
 @Module({
   imports: [
@@ -18,6 +19,13 @@ import { DatabaseModule } from './database/database.module';
     ]),
   ],
   controllers: [AppController, SentimentController],
-  providers: [AppService, SentimentService],
+  providers: [
+    AppService,
+    SentimentService,
+    {
+      provide: 'Logger',
+      useValue: Logger,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,0 +1,61 @@
+services:
+  api:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./gcp-keys.json
+      - MONGODB_URI=mongodb://mongodb:27017/sentiment-analysis
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+    depends_on:
+      - mongodb
+      - elasticsearch
+    networks:
+      - kibana-network
+      - elasticsearch-network
+      - mongo-network
+      - node-network
+
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+    networks:
+      - kibana-network
+      - elasticsearch-network
+      - mongo-network
+      - node-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    environment:
+      - discovery.type=single-node
+    ports:
+      - '9200:9200'
+    networks:
+      - kibana-network
+      - elasticsearch-network
+      - mongo-network
+      - node-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5601:5601'
+    networks:
+      - kibana-network
+      - elasticsearch-network
+      - mongo-network
+      - node-network
+
+networks:
+  node-network:
+    driver: bridge
+  mongo-network:
+    driver: bridge
+  elasticsearch-network:
+    driver: bridge
+  kibana-network:
+    driver: bridge
