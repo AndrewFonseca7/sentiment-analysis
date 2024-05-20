@@ -5,6 +5,8 @@ import { Sentiment } from './schemas/sentiment.schema';
 import { LanguageServiceClient } from '@google-cloud/language';
 import { SentimentResponseDto } from './dto/sentimentResponse.dto';
 import { Logger } from 'winston';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class SentimentService {
@@ -13,9 +15,14 @@ export class SentimentService {
   constructor(
     @InjectModel(Sentiment.name) private sentimentModel: Model<any>,
     @Inject('Logger') private readonly logger: Logger,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async analyzeText(text: string): Promise<SentimentResponseDto> {
+  async analyzeText(text: string): Promise<SentimentResponseDto | any> {
+    const cachedData = await this.cacheService.get(text);
+    if (cachedData) {
+      return cachedData;
+    }
     try {
       const [result] = await this.LanguageServiceClient.analyzeSentiment({
         document: { content: text, type: 'PLAIN_TEXT', language: 'en' },
@@ -36,6 +43,8 @@ export class SentimentService {
         magnitude: analysisResult.magnitude,
       };
 
+      await this.cacheService.set(text, sentimentResponseDto);
+      await this.cacheService.get(text);
       this.logger.error(
         `${SentimentService.name} Text analyzed: ${sentimentResponseDto}`,
       );

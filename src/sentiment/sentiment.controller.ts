@@ -6,18 +6,22 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SentimentService } from './sentiment.service';
 import { Sentiment } from './schemas/sentiment.schema';
 import { ApiTags, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SentimentRequestDto } from './dto/sentimentRequest.dto';
 import { SentimentResponseDto } from './dto/sentimentResponse.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Sentiment')
 @Controller('sentiment')
 export class SentimentController {
   constructor(private readonly sentimentService: SentimentService) {}
 
+  @CacheTTL(30)
+  @UseInterceptors(CacheInterceptor)
   @Post()
   @ApiOperation({
     summary: 'Analyze sentiment of a text',

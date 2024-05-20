@@ -10,6 +10,8 @@ import {
 } from './sentiment/schemas/sentiment.schema';
 import { DatabaseModule } from './database/database.module';
 import Logger from './logger/logger';
+import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [
@@ -17,6 +19,13 @@ import Logger from './logger/logger';
     MongooseModule.forFeature([
       { name: Sentiment.name, schema: SentimentSchema },
     ]),
+    CacheModule.registerAsync({
+      useFactory: (): CacheModuleOptions => ({
+        store: redisStore,
+        host: 'localhost', // dirección del servidor Redis
+        port: 6379, // puerto del servidor Redis
+      }),
+    }),
   ],
   controllers: [AppController, SentimentController],
   providers: [
