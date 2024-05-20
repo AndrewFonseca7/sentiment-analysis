@@ -7,6 +7,7 @@ import {
   UsePipes,
   ValidationPipe,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { SentimentService } from './sentiment.service';
 import { Sentiment } from './schemas/sentiment.schema';
@@ -22,7 +23,7 @@ export class SentimentController {
 
   @CacheTTL(30)
   @UseInterceptors(CacheInterceptor)
-  @Post()
+  @Post('analyze')
   @ApiOperation({
     summary: 'Analyze sentiment of a text',
     description:
@@ -55,7 +56,7 @@ export class SentimentController {
     }
   }
 
-  @Post('clear-cache')
+  @Delete('clear-cache')
   @ApiOperation({
     summary: 'Clear the cache',
     description: 'Clear the cache of the sentiment analysis',

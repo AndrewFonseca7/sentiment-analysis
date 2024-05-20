@@ -11,6 +11,7 @@ import {
 import { DatabaseModule } from './database/database.module';
 import Logger from './logger/logger';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
+import { GoogleSentimentService } from './google-sentiment/google-sentiment.service';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -35,6 +36,7 @@ import * as redisStore from 'cache-manager-ioredis';
       provide: 'Logger',
       useValue: Logger,
     },
+    GoogleSentimentService,
   ],
 })
 export class AppModule {}
