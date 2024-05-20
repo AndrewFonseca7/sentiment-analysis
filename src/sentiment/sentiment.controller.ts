@@ -7,19 +7,22 @@ import {
   UsePipes,
   ValidationPipe,
   UseInterceptors,
-  Delete,
+  Inject,
 } from '@nestjs/common';
 import { SentimentService } from './sentiment.service';
-import { Sentiment } from './schemas/sentiment.schema';
 import { ApiTags, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SentimentRequestDto } from './dto/sentimentRequest.dto';
 import { SentimentResponseDto } from './dto/sentimentResponse.dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { Logger } from 'winston';
 
 @ApiTags('Sentiment')
 @Controller('sentiment')
 export class SentimentController {
-  constructor(private readonly sentimentService: SentimentService) {}
+  constructor(
+    private readonly sentimentService: SentimentService,
+    @Inject('Logger') private readonly logger: Logger,
+  ) {}
 
   @CacheTTL(30)
   @UseInterceptors(CacheInterceptor)
@@ -32,14 +35,19 @@ export class SentimentController {
   @ApiBody({
     schema: { type: 'object', properties: { text: { type: 'string' } } },
     description: 'Text to analyze',
+    required: true,
+    examples: {
+      example: {
+        value: {
+          text: 'I got a feeling we are gonna win Our bodies make it perfect And your eyes can make me swim',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
     description: 'The sentiment analysis of the text',
-    type: Sentiment,
-    schema: {
-      example: { text: 'I love this product', score: 0.9, magnitude: 0.9 },
-    },
+    type: SentimentResponseDto,
   })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @UsePipes(new ValidationPipe())
@@ -47,28 +55,13 @@ export class SentimentController {
     @Body() analyzeSentimentDto: SentimentRequestDto,
   ): Promise<SentimentResponseDto> {
     try {
+      this.logger.info(
+        `${SentimentController.name} | POST | ANALYZE | ${JSON.stringify(analyzeSentimentDto)}`,
+      );
       return await this.sentimentService.analyzeText(analyzeSentimentDto.text);
     } catch (error) {
       throw new HttpException(
         'Error analyzing text',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  @Delete('clear-cache')
-  @ApiOperation({
-    summary: 'Clear the cache',
-    description: 'Clear the cache of the sentiment analysis',
-  })
-  @ApiResponse({ status: 200, description: 'Cache cleared' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  async clearCache(): Promise<void> {
-    try {
-      await this.sentimentService.clearCache();
-    } catch (error) {
-      throw new HttpException(
-        'Error clearing cache',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

@@ -17,10 +17,6 @@ export class SentimentService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async clearCache(): Promise<void> {
-    await this.cacheService.reset();
-  }
-
   async analyzeText(text: string): Promise<SentimentResponseDto> {
     // Create a cache key
     const cacheKey = `sentiment:${text}`;
