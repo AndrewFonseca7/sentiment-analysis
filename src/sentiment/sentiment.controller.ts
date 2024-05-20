@@ -54,4 +54,22 @@ export class SentimentController {
       );
     }
   }
+
+  @Post('clear-cache')
+  @ApiOperation({
+    summary: 'Clear the cache',
+    description: 'Clear the cache of the sentiment analysis',
+  })
+  @ApiResponse({ status: 200, description: 'Cache cleared' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async clearCache(): Promise<void> {
+    try {
+      await this.sentimentService.clearCache();
+    } catch (error) {
+      throw new HttpException(
+        'Error clearing cache',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
