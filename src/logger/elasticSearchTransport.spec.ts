@@ -1,5 +1,6 @@
 import { Client } from '@elastic/elasticsearch';
 import ElasticSearchTransport from './elasticSearchTransport';
+import Logger from './logger';
 
 jest.mock('@elastic/elasticsearch');
 
@@ -64,18 +65,17 @@ describe('ElasticSearchTransport', () => {
     transport.log(info, callback);
   });
 
-  it.skip('should emit error event on index failure', (done) => {
-    const info = { message: 'Test log message', level: 'info' };
-    const callback = jest.fn();
-    const error = new Error('Indexing error');
+  it('should handle logger errors', (done) => {
+    const error = new Error('Test error');
+    const errorHandlerSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
-    transport.on('error', (err) => {
-      expect(err).toBe(error);
+    Logger.emit('error', error);
+
+    process.nextTick(() => {
+      expect(errorHandlerSpy).toHaveBeenCalledWith('Error in logger:', error);
       done();
     });
-
-    mockClient.index.mockImplementation();
-
-    transport.log(info, callback);
   });
 });
