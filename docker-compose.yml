@@ -4,12 +4,16 @@ services:
     ports:
       - '3000:3000'
     environment:
+      - PORT = 3000
       - GOOGLE_APPLICATION_CREDENTIALS=./gcp-keys.json
       - MONGODB_URI=mongodb://mongodb:27017/sentiment-analysis
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - mongodb
       - elasticsearch
+      - redis
     networks:
       - kibana-network
       - elasticsearch-network
@@ -49,6 +53,12 @@ services:
       - elasticsearch-network
       - mongo-network
       - node-network
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
 
 networks:
   node-network:

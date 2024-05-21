@@ -6,7 +6,7 @@ import { SentimentResponseDto } from './dto/sentimentResponse.dto';
 import { Logger } from 'winston';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { GoogleSentimentService } from 'src/google-sentiment/google-sentiment.service';
+import { GoogleSentimentService } from '../google-sentiment/google-sentiment.service';
 
 @Injectable()
 export class SentimentService {
