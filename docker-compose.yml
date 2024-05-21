@@ -10,15 +10,19 @@ services:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - CACHE_TTL=60
+      - CACHE_SIZE=100
     depends_on:
       - mongodb
       - elasticsearch
+      - kibana
       - redis
     networks:
       - kibana-network
       - elasticsearch-network
       - mongo-network
       - node-network
+      - redis-network
 
   mongodb:
     image: mongo
@@ -29,6 +33,7 @@ services:
       - elasticsearch-network
       - mongo-network
       - node-network
+      - redis-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
@@ -41,6 +46,7 @@ services:
       - elasticsearch-network
       - mongo-network
       - node-network
+      - redis-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.2
@@ -53,12 +59,20 @@ services:
       - elasticsearch-network
       - mongo-network
       - node-network
+      - redis-network
 
   redis:
-    image: "redis:latest"
-    container_name: redis
+    image: redis:latest
+    environment:
+      - REDIS_HOST=localhost
     ports:
       - "6379:6379"
+    networks:
+      - kibana-network
+      - elasticsearch-network
+      - mongo-network
+      - node-network
+      - redis-network
 
 networks:
   node-network:
@@ -68,4 +82,6 @@ networks:
   elasticsearch-network:
     driver: bridge
   kibana-network:
+    driver: bridge
+  redis-network:
     driver: bridge
