@@ -1,73 +1,126 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Sentiment Analysis API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a Sentiment Analysis API built with NestJS. It utilizes Google Cloud's Natural Language API to analyze the sentiment of given text. The project includes logging with Elasticsearch and Kibana.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+- [API Documentation](#api-documentation)
+- [Running Tests](#running-tests)
+- [Logging and Monitoring](#logging-and-monitoring)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Installation
+- RESTful API with NestJS.
+- Swagger documentation.
+- Unit and end-to-end tests with Jest.
+- Google Cloud Natural Language API integration.
+- Dockerized app.
+- Elasticsearch and Kibana logging.
+- Environment-specific configurations.
+- MongoDB database.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 18 or higher)
+- npm (version 10 or higher)
+- MongoDB
+- Google Cloud account with access to Natural Language API
+- Docker (for kibana, elastic search and redis)
+- Elasticsearch and Kibana (for logging)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone
+   ```
+
+- MongoDB database.
+- Sentiment analysis using Google Cloud Natural Language API.
+- Validation of input data.
+- Logging with Elasticsearch and Kibana.
+- Environment-specific database configurations (development, testing, production).
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables. Create .env, .env.development, and .env.test files based on the provided example .env.example:
+
+   ```bash
+   GOOGLE_APPLICATION_CREDENTIALS=./path-to-your-gcp-keys-file.json
+   MONGODB_URI=mongodb://localhost:27017/sentiment-analysis
+   ENV=development
+   ELASTICSEARCH_HOST=http://localhost:9200
+   PORT=3000
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   ```
+
+### Running the Application
+
+#### Running for development
+
+Before you start the aplication be sure to run the kibana, elestic search and redis instances with docker using this command
 
 ```bash
-$ npm install
+npm run start:docker-instances
 ```
 
-## Running the app
+Then you can proceed to run the app
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Test
+#### Running on docker container
+
+Use this command on the root of the project
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up
 ```
 
-## Support
+### API Documentation
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+The API is documented using Swagger. Once the application is running, you can access the documentation at http://localhost:3000/api.
 
-## Stay in touch
+### Running Tests
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+To run unit tests
 
-## License
+```bash
+npm run test:cov
+```
 
-Nest is [MIT licensed](LICENSE).
+The end to end test are nunned on the test environment, so please be sure to have configured your _.env.test_ file to avoid modifications on the data base due to the tests.
+
+To run end to end tests
+
+```bash
+npm run test:e2e
+```
+
+### Logging and Monitoring
+
+The application logs important events and errors to Elasticsearch, which can be visualized using Kibana.
+
+#### Example Log Information
+
+- Timestamps
+- Endpoint requested
+- Input parameters
+- Response status codes
+- Detailed error messages
+- Cache events (hits and misses)
+- Queue events (jobs enqueued, processed, failed)
