@@ -8,6 +8,9 @@ import { AppCacheModule } from './cache/cache.module';
 import * as redisStore from 'cache-manager-ioredis';
 import { SentimentModule } from './sentiment/sentiment.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthController } from './health/health.controller';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -27,10 +30,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       isGlobal: true,
       inject: [ConfigService],
     }),
+    HttpModule,
+    TerminusModule,
     AppCacheModule,
     SentimentModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     AppService,
     {

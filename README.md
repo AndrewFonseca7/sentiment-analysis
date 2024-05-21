@@ -88,7 +88,7 @@ npm run start:dev
 Use this command on the root of the project
 
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 ### API Documentation
