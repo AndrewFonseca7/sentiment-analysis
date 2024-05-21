@@ -6,14 +6,12 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
-  UseInterceptors,
   Inject,
 } from '@nestjs/common';
 import { SentimentService } from './sentiment.service';
 import { ApiTags, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SentimentRequestDto } from './dto/sentimentRequest.dto';
 import { SentimentResponseDto } from './dto/sentimentResponse.dto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { Logger } from 'winston';
 
 @ApiTags('Sentiment')
@@ -24,8 +22,6 @@ export class SentimentController {
     @Inject('Logger') private readonly logger: Logger,
   ) {}
 
-  @CacheTTL(30)
-  @UseInterceptors(CacheInterceptor)
   @Post('analyze')
   @ApiOperation({
     summary: 'Analyze sentiment of a text',

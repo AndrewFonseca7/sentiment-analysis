@@ -35,9 +35,13 @@ describe('SentimentController (e2e)', () => {
   });
 
   it('/sentiment/analyze (POST) - 200 analyze sentiment of a text requesting the API', async () => {
+    await request(app.getHttpServer()).delete('/cache').expect(204);
     const dbSentimentBefore = await sentimentModel.findOne({ text });
     const cacheSentimentBefore = await cacheService.get(text);
-    const spy = jest.spyOn(googleSentimentService, 'analyzeSentiment');
+    const googleSentimentServiceSpy = jest.spyOn(
+      googleSentimentService,
+      'analyzeSentiment',
+    );
 
     expect(dbSentimentBefore).toBeNull();
     expect(cacheSentimentBefore).toBeUndefined();
@@ -57,49 +61,71 @@ describe('SentimentController (e2e)', () => {
     const dbSentimentAfter = await sentimentModel.findOne({ text });
     expect(cacheSentimentAfter).not.toBeNull();
     expect(dbSentimentAfter).not.toBeNull();
-    expect(spy).toHaveBeenCalledWith(text);
+    expect(googleSentimentServiceSpy).toHaveBeenCalledWith(text);
   });
 
-  // it('/sentiment/analyze (POST) - 200 analyze sentiment of a text requesting the CACHE', async () => {
-  //   await request(app.getHttpServer())
-  //     .post('/sentiment/analyze')
-  //     .send({
-  //       text,
-  //     })
-  //     .expect(201)
-  //     .expect((res) => {
-  //       expect(res.body).toHaveProperty('score');
-  //       expect(res.body).toHaveProperty('magnitude');
-  //     });
+  it('/sentiment/analyze (POST) - 200 analyze sentiment of a text requesting the CACHE', async () => {
+    const dbSentimentBefore = await sentimentModel.findOne({ text });
+    const cacheSentimentBefore = await cacheService.get(text);
+    const googleSentimentServiceSpy = jest.spyOn(
+      googleSentimentService,
+      'analyzeSentiment',
+    );
 
-  //   const dbSentimentBefore = await sentimentModel.findOne({ text });
-  //   const cacheSentimentBefore = await cacheService.get(text);
-  //   const spy = jest.spyOn(googleSentimentService, 'analyzeSentiment');
+    expect(dbSentimentBefore).not.toBeNull();
+    expect(cacheSentimentBefore).not.toBeNull();
 
-  //   expect(dbSentimentBefore).not.toBeNull();
-  //   expect(cacheSentimentBefore).not.toBeNull();
+    await request(app.getHttpServer())
+      .post('/sentiment/analyze')
+      .send({
+        text,
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('score');
+        expect(res.body).toHaveProperty('magnitude');
+      });
 
-  //   console.log('cacheSentimentBefore', cacheSentimentBefore);
+    const cacheSentimentAfter = await cacheService.get(text);
+    const dbSentimentAfter = await sentimentModel.findOne({ text });
 
-  //   await request(app.getHttpServer())
-  //     .post('/sentiment/analyze')
-  //     .send({
-  //       text,
-  //     })
-  //     .expect(201)
-  //     .expect((res) => {
-  //       expect(res.body).toHaveProperty('score');
-  //       expect(res.body).toHaveProperty('magnitude');
-  //     });
+    expect(cacheSentimentAfter).not.toBeNull();
+    expect(dbSentimentAfter).not.toBeNull();
 
-  //   const cacheSentimentAfter = await cacheService.get(text);
-  //   const dbSentimentAfter = await sentimentModel.findOne({ text });
+    expect(googleSentimentServiceSpy).toHaveBeenCalledTimes(1);
+  });
 
-  //   expect(cacheSentimentAfter).not.toBeNull();
-  //   expect(dbSentimentAfter).not.toBeNull();
+  it('/sentiment/analyze (POST) - 200 analyze sentiment of a text requesting the DATABASE', async () => {
+    await request(app.getHttpServer()).delete('/cache').expect(204);
+    const dbSentimentBefore = await sentimentModel.findOne({ text });
+    const cacheSentimentBefore = await cacheService.get(text);
+    const googleSentimentServiceSpy = jest.spyOn(
+      googleSentimentService,
+      'analyzeSentiment',
+    );
 
-  //   expect(spy).not.toHaveBeenCalled();
-  // });
+    expect(dbSentimentBefore).not.toBeNull();
+    expect(cacheSentimentBefore).not.toBeDefined();
+
+    await request(app.getHttpServer())
+      .post('/sentiment/analyze')
+      .send({
+        text,
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('score');
+        expect(res.body).toHaveProperty('magnitude');
+      });
+
+    const cacheSentimentAfter = await cacheService.get(text);
+    const dbSentimentAfter = await sentimentModel.findOne({ text });
+
+    expect(cacheSentimentAfter).not.toBeNull();
+    expect(dbSentimentAfter).not.toBeNull();
+
+    expect(googleSentimentServiceSpy).toHaveBeenCalledTimes(1);
+  });
 
   it('/sentiment/analyze (POST) - 400 analyze sentiment of a text with missing text', () => {
     return request(app.getHttpServer())

@@ -5,14 +5,12 @@ import { GoogleSentimentService } from '../google-sentiment/google-sentiment.ser
 import { MongooseModule } from '@nestjs/mongoose';
 import { Sentiment, SentimentSchema } from './schemas/sentiment.schema';
 import Logger from '../logger/logger';
-import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Sentiment.name, schema: SentimentSchema },
     ]),
-    CacheModule.register(),
   ],
   controllers: [SentimentController],
   providers: [
@@ -23,5 +21,6 @@ import { CacheModule } from '@nestjs/cache-manager';
       useValue: Logger,
     },
   ],
+  exports: [SentimentService],
 })
 export class SentimentModule {}

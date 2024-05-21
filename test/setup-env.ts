@@ -1,3 +1,3 @@
-import dotenv from 'dotenv';
-process.env.NODE_ENV = 'test';
-dotenv.config({ path: '.env.test' });
+import { config as dotEnvConfig } from 'dotenv';
+console.log('Loading .env.test environment variables');
+dotEnvConfig({ path: '.env.test' });
