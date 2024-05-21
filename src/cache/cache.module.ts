@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CacheController } from './cache.controller';
 import { CacheModule } from '@nestjs/cache-manager';
-import Logger from 'src/logger/logger';
+import Logger from '../logger/logger';
 
 @Module({
   imports: [CacheModule.register()],

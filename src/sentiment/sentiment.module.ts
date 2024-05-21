@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SentimentController } from './sentiment.controller';
 import { SentimentService } from './sentiment.service';
-import { GoogleSentimentService } from 'src/google-sentiment/google-sentiment.service';
+import { GoogleSentimentService } from '../google-sentiment/google-sentiment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Sentiment, SentimentSchema } from './schemas/sentiment.schema';
-import Logger from 'src/logger/logger';
+import Logger from '../logger/logger';
 import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({

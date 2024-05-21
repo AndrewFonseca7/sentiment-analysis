@@ -13,12 +13,6 @@ describe('SentimentService', () => {
   let cacheService: any;
 
   beforeEach(async () => {
-    // class MockSentimentModel {
-    //   constructor(private data) {}
-    //   save = jest.fn().mockResolvedValue(this.data);
-    //   static findOne = jest.fn();
-    // }
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SentimentService,
