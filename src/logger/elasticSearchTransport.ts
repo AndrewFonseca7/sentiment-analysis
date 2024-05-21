@@ -14,27 +14,30 @@ class ElasticSearchTransport extends TransportStream {
     this.client = new Client({ node: opts.elasticsearchHost });
   }
 
-  log(info: any, callback: () => void) {
+  async log(info: any, callback: () => void) {
     setImmediate(() => {
       this.emit('logged', info);
     });
 
-    this.client
-      .index({
+    try {
+      await this.client.index({
         index: 'sentiment-logs',
         body: {
+          '@timestamp': new Date(),
+          level: info.level,
           message: info.message,
-          severity: info.level,
-          text: info.message,
           service: 'sentiment-analysis',
+          environment: process.env.NODE_ENV,
+          requestID: info.requestID,
+          userID: info.userID,
+          errorStack: info.error ? info.error.stack : null,
         },
-      })
-      .then(() => {
-        callback();
-      })
-      .catch((error) => {
-        this.emit('error', error);
       });
+    } catch (error) {
+      this.emit('error', error);
+    }
+
+    callback();
 
     return true;
   }
