@@ -10,6 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
       - uses: actions/checkout@v4
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag sentiment-analysis-image:$(date +%s)
+      
+      - name: Run tests
+        run: npm test
+        
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+  
+      - name: Build Docker image
+        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app .
+  
+      - name: Push Docker image
+        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app
+  
+      - name: Deploy to Cloud Run
+        run: gcloud run deploy nestjs-app \
+              --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app \
+              --platform managed \
+              --region us-central1 \
+              --allow-unauthenticated
