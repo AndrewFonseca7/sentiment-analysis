@@ -13,7 +13,6 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout code
 
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -24,7 +23,7 @@ jobs:
 
       - name: Run tests
         run: npm run test
-        
+
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
@@ -34,16 +33,16 @@ jobs:
 
       - name: Configure Docker
         run: gcloud auth configure-docker
-  
+
       - name: Build Docker image
-        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app .
-  
+        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/[IMAGE] .
+
       - name: Push Docker image
-        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app
-  
+        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/[IMAGE]
+
       - name: Deploy to Cloud Run
-        run: gcloud run deploy nestjs-app \
-              --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nestjs-app \
-              --platform managed \
-              --region us-central1 \
-              --allow-unauthenticated
+        run: gcloud run deploy [IMAGE] \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/[IMAGE] \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated
