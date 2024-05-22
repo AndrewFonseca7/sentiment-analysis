@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentiment Analysis API</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script>
+      function analyzeSentiment(event) {
+        event.preventDefault();
+
+        const text = document.querySelector('textarea[name="text"]').value;
+
+        fetch('/sentiment/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const resultElement = document.getElementById('result');
+            const scoreElement = document.getElementById('score');
+            const magnitudeElement = document.getElementById('magnitude');
+
+            resultElement.textContent = data.text;
+            scoreElement.textContent = `Score: ${data.score}`;
+            magnitudeElement.textContent = `Magnitude: ${data.magnitude}`;
+
+            if (data.score < 0) {
+              scoreElement.style.color = 'red';
+            } else if (data.score === 0) {
+              scoreElement.style.color = 'blue';
+            } else {
+              scoreElement.style.color = 'green';
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      }
+
+      function fetchSong() {
+        fetch('https://songsexcerpt.mohd.app/api/v1/getRandomExcerpt')
+          .then((response) => response.json())
+          .then((data) => {
+            const songDataElement = document.getElementById('song-data');
+            const artistElement = document.getElementById('artist');
+            const songElement = document.getElementById('song');
+            const textareaElement = document.querySelector(
+              'textarea[name="text"]',
+            );
+
+            songDataElement.style.display = 'flex';
+            artistElement.textContent = data.artist;
+            songElement.textContent = data.song;
+            textareaElement.value = data.lyrics_excerpt;
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Sentiment Analysis API</h1>
+      <h2>
+        Analyze the sentiment of a text using a google sentiment analysis API
+      </h2>
+    </header>
+
+    <main>
+      <section class="what-is">
+        <h3>What is this about?</h3>
+        <p>
+          Sentiment analysis is the process of determining whether a piece of
+          writing is positive, negative, or neutral. It is a common task in
+          natural language processing (NLP) and has many applications such as
+          customer feedback analysis, social media monitoring, and market
+          research.
+        </p>
+
+        <p>
+          This application uses the Google Cloud Natural Language API to analyze
+          the sentiment of a piece of text. The API uses machine learning to
+          analyze the text and return a sentiment score and magnitude.
+        </p>
+
+        <p>
+          The sentiment score is a number between
+          <strong class="red">-1</strong> and
+          <strong class="green">1</strong> that indicates the overall sentiment
+          of the text. A score closer to
+          <strong class="green">1</strong> indicates a more positive sentiment,
+          while a score closer to <strong class="red">-1</strong> indicates a
+          more negative sentiment. A score of 0 indicates a neutral sentiment.
+        </p>
+        <p>
+          The sentiment magnitude is a number that indicates the overall
+          emotional intensity of the text. It can be used to differentiate
+          between text that is strongly positive or negative and text that is
+          weakly positive or negative.
+        </p>
+      </section>
+      <section class="testing">
+        <h4>
+          Test the sentiment analysis API by entering a piece of text below:
+        </h4>
+        <p>
+          For example, you can enter a review, a tweet, or any other piece of
+          text that you want to analyze. Minimum length of text should be 50
+          characters and maximum length should be 1200 characters.
+        </p>
+        <div>
+          <h5>
+            Or analyze a random song excerpt:
+            <button onclick="fetchSong()">Get Random Song Excerpt</button>
+            <div id="song-data">
+              <p><strong>Artist:</strong> <span id="artist"></span></p>
+              <p><strong>Song:</strong> <span id="song"></span></p>
+            </div>
+          </h5>
+        </div>
+        <form onsubmit="analyzeSentiment(event)">
+          <textarea name="text" rows="6" cols="60"></textarea>
+          <br />
+          <button type="submit">Analyze</button>
+        </form>
+        <div class="analysis-result">
+          <h2>Result:</h2>
+          <p id="result"></p>
+          <p id="score"></p>
+          <p id="magnitude"></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

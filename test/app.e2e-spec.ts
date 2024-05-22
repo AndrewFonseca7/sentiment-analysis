@@ -15,10 +15,10 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET) - 200 should return "Hello ReflexAI, nice to meet you!"', () => {
+  it.only('/ (GET) - 200 should return static html', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello ReflexAI, nice to meet you!');
+      .expect('Content-Type', 'text/html; charset=UTF-8');
   });
 });

@@ -1,18 +1,21 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Res } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { join } from 'path';
+import { Response } from 'express';
 
 @ApiTags('/')
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get()
   @ApiOperation({
-    summary: 'Hello Reflex AI!',
-    description: 'Return a hello world message',
+    summary: 'Return static html',
+    description: 'Return a static html file where you can test the API',
   })
-  getHello(): string {
-    return this.appService.getHello();
+  @ApiResponse({
+    status: 200,
+    description: 'Return a static html file',
+  })
+  serveStaticHtml(@Res() res: Response): void {
+    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
   }
 }

@@ -1,4 +1,3 @@
-import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
@@ -11,6 +10,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health/health.controller';
 import { HttpModule } from '@nestjs/axios';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -33,11 +34,13 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
     TerminusModule,
     AppCacheModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     SentimentModule,
   ],
   controllers: [AppController, HealthController],
   providers: [
-    AppService,
     {
       provide: 'Logger',
       useValue: Logger,

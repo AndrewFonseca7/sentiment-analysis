@@ -26,12 +26,12 @@ export class HealthController {
     status: 200,
     description: 'The health of the application',
   })
-  check() {
-    return this.health.check([
+  async check() {
+    return await this.health.check([
       async () => this.http.pingCheck('google', 'https://www.google.com'),
-      async () => this.mongoose.pingCheck('database', { timeout: 1500 }),
       async () =>
         this.http.pingCheck('elasticsearch', process.env.ELASTICSEARCH_HOST),
+      async () => this.mongoose.pingCheck('database', { timeout: 1500 }),
     ]);
   }
 }
