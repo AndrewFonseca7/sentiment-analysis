@@ -1,7 +1,7 @@
 {
   "name": "sentiment-analysis-api",
   "version": "0.0.1",
-  "description": "",
+  "description": "A sentiment analysis API built with NestJS and Elasticsearch",
   "author": "Andrew Fonseca",
   "private": true,
   "license": "UNLICENSED",
